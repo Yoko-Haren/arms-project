@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: arms-project
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn arms_project.wsgi:application
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: PASSWORD_PEPPER
+        generateValue: true
+      - key: DEBUG
+        value: "false"

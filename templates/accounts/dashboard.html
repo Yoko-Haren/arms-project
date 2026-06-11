@@ -1,0 +1,572 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARMS - Dashboard</title>
+    
+    <!-- Flaticon Uicons -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #f0edff;
+            --success: #2E7D32;
+            --success-light: #e8f5e9;
+            --info: #1565C0;
+            --info-light: #e3f2fd;
+            --warning: #E65100;
+            --warning-light: #fff3e0;
+            --danger: #C62828;
+            --danger-light: #ffebee;
+            --purple: #6A1B9A;
+            --purple-light: #f3e5f5;
+            --gray-50: #f8f9fa;
+            --gray-100: #f0f4f8;
+            --gray-200: #e8ecf1;
+            --gray-300: #e0e5ea;
+            --gray-500: #6c757d;
+            --gray-700: #1a1a2e;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.04);
+            --shadow-md: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 6px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf1 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .welcome h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .welcome h1 i { color: var(--primary); }
+        .welcome p {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+        .btn-logout {
+            padding: 0.6rem 1.4rem;
+            background: white;
+            color: var(--danger);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            border: 1.5px solid #fecaca;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-logout:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        /* ========== STAT CARDS ========== */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .stat-grid { grid-template-columns: 1fr; } }
+
+        .stat-card {
+            border-radius: var(--radius-md);
+            padding: 1.5rem 1.25rem;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: var(--transition);
+        }
+        .stat-card:hover::after {
+            width: 130px;
+            height: 130px;
+            top: -40px;
+            right: -40px;
+        }
+        .stat-card.blue { background: linear-gradient(135deg, #6C5CE7, #a29bfe); }
+        .stat-card.green { background: linear-gradient(135deg, #2E7D32, #43a047); }
+        .stat-card.purple { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-card.orange { background: linear-gradient(135deg, #E65100, #f57c00); }
+
+        .stat-card .stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
+            opacity: 0.85;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.15rem;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 600;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== MESSAGES ========== */
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+        .success-msg {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 0.9rem 1.2rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .success-msg i { color: var(--success); }
+
+        /* ========== DASHBOARD LAYOUT ========== */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
+
+        /* ========== SIDEBAR CARD ========== */
+        .sidebar-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.4rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            height: fit-content;
+            position: sticky;
+            top: 1rem;
+        }
+        .sidebar-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.9rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+        .sidebar-card-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .sidebar-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray-700);
+        }
+        .profile-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #6C5CE7, #a29bfe);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(108,92,231,0.3);
+            margin-bottom: 0.6rem;
+        }
+        .profile-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gray-700);
+        }
+        .profile-email {
+            font-size: 0.72rem;
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.5rem 0.6rem;
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            font-size: 0.73rem;
+            transition: var(--transition);
+        }
+        .info-item:hover { background: var(--primary-light); }
+        .info-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(46,125,50,0.3);
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            white-space: nowrap;
+        }
+        .info-value {
+            color: var(--gray-500);
+            margin-left: auto;
+            text-align: right;
+            font-size: 0.7rem;
+        }
+
+        /* ========== MAIN CONTENT CARDS ========== */
+        .main-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+        .main-card:last-child { margin-bottom: 0; }
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-title i { color: var(--primary); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.8rem;
+        }
+        .info-box {
+            background: var(--gray-50);
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+        }
+        .info-box .label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+        .info-box .value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        /* ========== QUICK ACTIONS ========== */
+        .actions-row {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: 25px;
+            background: white;
+            color: var(--gray-700);
+            font-size: 0.73rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            text-decoration: none;
+        }
+        .btn-action:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108,92,231,0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="welcome">
+                <h1>
+                    <i class="fi fi-rr-apps"></i>
+                    Dashboard
+                </h1>
+                <p>Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+            </div>
+            <a href="{% url 'signout' %}" class="btn-logout">
+                <i class="fi fi-rr-sign-out"></i>
+                Sign Out
+            </a>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="success-msg">
+                <i class="fi fi-rr-check-circle"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fi fi-rr-user"></i></div>
+                <div class="stat-value">1</div>
+                <div class="stat-label">Active Account</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fi fi-rr-check-circle"></i></div>
+                <div class="stat-value">Active</div>
+                <div class="stat-label">Account Status</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fi fi-rr-calendar"></i></div>
+                <div class="stat-value">{{ user.date_joined|date:"M Y" }}</div>
+                <div class="stat-label">Member Since</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fi fi-rr-shield-check"></i></div>
+                <div class="stat-value">Secure</div>
+                <div class="stat-label">Account Protected</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+            <!-- Sidebar -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <div class="sidebar-card-icon">
+                        <i class="fi fi-rr-user"></i>
+                    </div>
+                    <div class="sidebar-card-title">My Profile</div>
+                </div>
+                <div style="text-align:center;margin-bottom:1.2rem;">
+                    <div class="profile-avatar">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
+                    <div class="profile-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="profile-email">{{ user.email }}</div>
+                </div>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-dot"></span>
+                        <span class="info-label">Username</span>
+                        <span class="info-value">@{{ user.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-dot"></span>
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ user.email|truncatechars:20 }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-dot"></span>
+                        <span class="info-label">Joined</span>
+                        <span class="info-value">{{ user.date_joined|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-dot"></span>
+                        <span class="info-label">Last Login</span>
+                        <span class="info-value">{{ user.last_login|date:"M d, Y"|default:"Today" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div>
+                <!-- Account Details -->
+                <div class="main-card">
+                    <div class="card-title">
+                        <i class="fi fi-rr-id-badge"></i>
+                        Account Details
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <div class="label">Full Name</div>
+                            <div class="value">{{ user.get_full_name|default:"Not set" }}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Username</div>
+                            <div class="value">@{{ user.username }}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Email Address</div>
+                            <div class="value">{{ user.email }}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Member Since</div>
+                            <div class="value">{{ user.date_joined|date:"F d, Y" }}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Account Status</div>
+                            <div class="value" style="color:#2E7D32;">
+                                <i class="fi fi-rr-check-circle"></i> Active
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Staff Status</div>
+                            <div class="value">
+                                {% if user.is_staff %}
+                                <span style="color:#6C5CE7;">Admin</span>
+                                {% else %}
+                                <span style="color:#6c757d;">Standard User</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="main-card">
+                    <div class="card-title">
+                        <i class="fi fi-rr-bolt"></i>
+                        Quick Actions
+                    </div>
+                    <div class="actions-row">
+                        <a href="#" class="btn-action">
+                            <i class="fi fi-rr-user-pen"></i> Edit Profile
+                        </a>
+                        <a href="#" class="btn-action">
+                            <i class="fi fi-rr-lock"></i> Change Password
+                        </a>
+                        <a href="#" class="btn-action">
+                            <i class="fi fi-rr-settings"></i> Account Settings
+                        </a>
+                        <a href="#" class="btn-action">
+                            <i class="fi fi-rr-bell"></i> Notifications
+                        </a>
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <div class="main-card">
+                    <div class="card-title">
+                        <i class="fi fi-rr-info-circle"></i>
+                        System Information
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <div class="label">System</div>
+                            <div class="value">ARMS</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Version</div>
+                            <div class="value">1.0.0</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Security</div>
+                            <div class="value" style="color:#2E7D32;">
+                                <i class="fi fi-rr-shield-check"></i> Protected
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="label">Encryption</div>
+                            <div class="value">PBKDF2 + Salt + Pepper</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
