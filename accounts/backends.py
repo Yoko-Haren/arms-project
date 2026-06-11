@@ -1,7 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-import os
 
 User = get_user_model()
 
@@ -15,8 +14,8 @@ class EmailOrUsernameModelBackend(ModelBackend):
                 Q(username=username) | Q(email=username)
             )
             
-            # Check password using custom pepper method
-            if user.check_password_with_pepper(password):
+            # Use Django's default password checking
+            if user.check_password(password):
                 return user
             
         except User.DoesNotExist:

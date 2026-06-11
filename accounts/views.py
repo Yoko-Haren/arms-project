@@ -130,23 +130,20 @@ def register_view(request):
             errors_list.append('Passwords do not match.')
         
         if errors_list:
-            error = errors_list[0]  # Show first error
+            error = errors_list[0]
         else:
             # Create user
             try:
                 user = User.objects.create_user(
                     email=email,
                     username=username,
-                    password=password,
+                    password=password,  # Django handles the hashing
                     first_name=first_name,
                     last_name=last_name,
                 )
                 
-                # Set custom password with pepper for extra security
+                # Set salt for record keeping (but use Django's default hashing)
                 user.salt = secrets.token_hex(32)
-                pepper = get_secret_pepper()
-                peppered_password = f"{password}{user.salt}{pepper}"
-                user.set_password(peppered_password)
                 user.save()
                 
                 messages.success(request, 'Registration successful! Please sign in with your credentials.')
